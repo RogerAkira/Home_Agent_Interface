@@ -1,0 +1,143 @@
+var https = require('https');
+
+exports.handler = (event, context) => {
+
+    try {
+
+        if (event.session.new) {
+            // New Session
+            console.log("NEW SESSION");
+        }
+
+        switch (event.request.type) {
+
+            case "LaunchRequest":
+                // > Launch Request
+                console.log('LAUNCH REQUEST');
+                context.succeed(
+                    generateResponse(
+                        buildSpeechletResponse("Welcome to vehicle control", true),
+                        {}
+                    )
+                );
+                break;
+
+
+            case "IntentRequest":
+                // > Intent Request
+                console.log('INTENT RESQUEST');
+
+                switch(event.request.intent.name) {
+
+                    case "turnoncar":
+                        // enter http request to do intent here
+                        console.log(event.request.intent);
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('turning on car', true),
+                                {}
+                            )
+                        );
+                        break;
+
+
+                    case "turnoffcar":
+                        // enter http request to do intent here
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('stopping the engine', true),
+                                {}
+                            )
+                        );
+                        break;
+
+                    case "CloseWindow":
+                        // enter http request to do intent here
+                        var position = event.request.intent.slots.vehicleposition.value;
+                        console.log(event.request.intent.slots.vehicleposition);
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('closing ' + position + ' window', true),
+                                {}
+                            )
+                        );
+                        break;
+
+                    case "OpenWindow":
+                        // enter http request to do intent here
+                        var position = event.request.intent.slots.vehicleposition.value;
+                        console.log(event.request.intent.slots.vehicleposition);
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('opening ' + position + ' window', true),
+                                {}
+                            )
+                        );
+                        break;
+
+                    case "LockDoor":
+                        // enter http request to do intent here
+                        var position = event.request.intent.slots.vehicleposition.value;
+                        console.log(event.request.intent.slots.vehicleposition);
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('locking ' + position + ' door', true),
+                                {}
+                            )
+                        );
+                        break;
+
+
+                    case "UnlockDoor":
+                        // enter http request to do intent here
+                        var position = event.request.intent.slots.vehicleposition.value;
+                        console.log(event.request.intent.slots.vehicleposition);
+                        context.succeed(
+                            generateResponse(
+                                buildSpeechletResponse('unlocking ' + position + ' door', true),
+                                {}
+                            )
+                        );
+                        break;
+
+
+                    default:
+                        throw "Invalid intent";
+                }
+                break;
+
+            case "SessionEndedRequest":
+                // > Session Ended Request
+                console.log('SESSION ENDED REQUEST');
+                break;
+
+            default:
+                context.fail('INVALID REQUEST TYPE: ${event.request.type}');
+
+        }
+    } catch(error) { context.fail('Exception: ${error}')}
+};
+
+
+// Helpers
+buildSpeechletResponse = (outputText, shouldEndSession) => {
+
+    return {
+        outputSpeech: {
+            type: "PlainText",
+            text: outputText
+        },
+        shouldEndSession: shouldEndSession
+    };
+
+};
+
+generateResponse = (speechletResponse, sessionAttributes) => {
+
+    return {
+        version: "1.0",
+        sessionAttributes: sessionAttributes,
+        response: speechletResponse
+    };
+
+};
